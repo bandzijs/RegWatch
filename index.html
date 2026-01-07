@@ -39,7 +39,8 @@
                     <h1 class="hero-title">Stay ahead of regulatory changes in Latvia.</h1>
                     <p class="hero-description"> Regulatory updates with direct links to official sources. Delivered to your inbox.</p>
                     
-                    <form class="email-form" id="subscribeForm">
+                    <form name="subscribe" method="POST" data-netlify="true" class="email-form" id="subscribeForm">
+                        <input type="hidden" name="form-name" value="subscribe">
                         <input 
                             type="email" 
                             id="email" 
