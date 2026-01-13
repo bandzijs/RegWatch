@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
-import type { User } from '@supabase/supabase-js';
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,7 +14,7 @@ export const useAuth = () => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         setUser(session?.user || null);
       }
     );
@@ -45,4 +44,11 @@ export const signIn = async (email: string, password: string) => {
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut();
   return { error };
+};
+
+export const subscribeEmail = async (email: string) => {
+  const { data, error } = await supabase
+    .from("email_subscriptions")
+    .insert({ email });
+  return { data, error };
 };
