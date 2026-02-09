@@ -179,7 +179,7 @@ export const clearOldDuplicates = async (daysOld: number = 90): Promise<number> 
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysOld);
 
-    const { data, error, count } = await supabase
+    const { error, count } = await supabase
       .from('email_duplicates')
       .delete()
       .lt('attempted_at', cutoffDate.toISOString())
