@@ -18,7 +18,7 @@ export default function TestSupabase() {
         }
 
         // Test 2: Try to get session
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        const { error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           setStatus(`❌ Error getting session: ${sessionError.message}`);
@@ -27,7 +27,7 @@ export default function TestSupabase() {
         }
 
         // Test 3: Check if we can access the API
-        const { data: { user } } = await supabase.auth.getUser();
+        await supabase.auth.getUser();
         
         setStatus('✅ Supabase is connected successfully! Ready to use.');
         setIsConnected(true);

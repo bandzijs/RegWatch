@@ -8,6 +8,27 @@ interface CookieConsentWindow extends Window {
   };
 }
 
+/**
+ * CookieConsent Component
+ *
+ * Initializes the CookieConsent banner by Osano.
+ * Handles cookie preferences and policy link.
+ *
+ * @component
+ * - Appears at bottom of page
+ * - Themed to match RegPulss branding (dark background, red accent)
+ * - Dismissible with Accept button
+ * - Link to privacy policy
+ *
+ * @example
+ * return <CookieConsent />
+ *
+ * Dependencies:
+ * - Requires CDN script loaded in layout.tsx:
+ *   https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js
+ *
+ * @returns {null} Component returns null (CDN script handles rendering)
+ */
 export default function CookieConsent() {
   useEffect(() => {
     // Initialize CookieConsent by Osano

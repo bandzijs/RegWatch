@@ -1,11 +1,36 @@
 'use client';
 
 import { useState } from 'react';
-import { subscribeEmail } from '@/lib/useSupabase';
 
+/**
+ * SubscribeForm Component
+ *
+ * Email subscription form with client-side validation and success modal.
+ * Sends subscription request to `/api/subscribe` endpoint.
+ *
+ * @component
+ * Features:
+ * - Real-time email validation
+ * - Loading state during submission
+ * - Error messages displayed inline
+ * - Success modal confirmation
+ * - Accessible form inputs with aria-labels
+ *
+ * @example
+ * return <SubscribeForm />
+ *
+ * Accessibility:
+ * - Form inputs have aria-label attributes
+ * - Success modal can be dismissed by clicking outside or Close button
+ * - Error messages are visible inline
+ * - Button disabled state during submission
+ *
+ * @returns {ReactElement} Email subscription form with modal
+ */
 export default function SubscribeForm() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -18,20 +43,30 @@ export default function SubscribeForm() {
     const emailInput = formElement.querySelector('input[type="email"]') as HTMLInputElement;
     const email = emailInput.value;
 
+    // Clear previous errors
+    setError(null);
+
     if (!validateEmail(email)) {
-      alert('Please enter a valid email address.');
+      setError('Please enter a valid email address.');
       return;
     }
 
     setLoading(true);
 
     try {
-      // Call Supabase to save the email
-      const { data, error } = await subscribeEmail(email);
+      // Call the API endpoint
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
 
-      if (error) {
-        alert('Error subscribing. Please try again.');
-        console.error('Subscription error:', error.message);
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Error subscribing. Please try again.');
         return;
       }
 
@@ -43,7 +78,7 @@ export default function SubscribeForm() {
       formElement.reset();
     } catch (error) {
       console.error('Subscription error:', error);
-      alert('An error occurred. Please try again.');
+      setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -75,6 +110,13 @@ export default function SubscribeForm() {
       >
         {loading ? 'Subscribing...' : 'Subscribe'}
       </button>
+
+      {/* Error message */}
+      {error && (
+        <p className="error-message" style={{ color: '#DC2626', marginTop: '0.5rem', fontSize: '0.875rem' }}>
+          {error}
+        </p>
+      )}
 
       {/* Success Modal */}
       {showModal && (
