@@ -65,7 +65,17 @@ export type Env = z.infer<typeof envSchema>;
  */
 export function validateEnv(): Env {
   try {
-    return envSchema.parse(process.env);
+    // Construct the object using individual process.env.* accesses so that
+    // Next.js / webpack DefinePlugin can inline each NEXT_PUBLIC_* value at
+    // build time.  Passing `process.env` as a whole object does NOT work in
+    // client bundles because only direct property accesses are replaced.
+    return envSchema.parse({
+      NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+      NEXT_PUBLIC_VERCEL_ANALYTICS_ID: process.env.NEXT_PUBLIC_VERCEL_ANALYTICS_ID,
+      NODE_ENV: process.env.NODE_ENV,
+    });
   } catch (error) {
     console.error('❌ Invalid environment variables:');
     console.error('');
